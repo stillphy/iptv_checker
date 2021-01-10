@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -79,10 +80,11 @@ namespace IPTV_Checker_2.Models
         {
             if (!string.IsNullOrWhiteSpace(url))
             {
-                MatchCollection urlmatches = Regex.Matches(url, "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(?([^#]*))?(#(.*))?", RegexOptions.IgnoreCase);
-                Host = urlmatches[4].Value;
-                Userdata = urlmatches[6].Value;
-                AllChannelsUrl = Host + "get.php" + Userdata + "&type=m3u_plus&output=mpegts";
+                var uribasedonurl = new Uri(url);
+                uribasedonurl.GetComponents(UriComponents.PathAndQuery, UriFormat.UriEscaped);
+                Host = uribasedonurl.IdnHost;
+                Userdata = uribasedonurl.Query;
+                AllChannelsUrl = Host + "get.php" + Userdata;
                 ServerInfoUrl = Host + "panel_api.php" + Userdata;
             }
         }
@@ -119,7 +121,7 @@ namespace IPTV_Checker_2.Models
                     {
                         byte[] g;
                         g = new byte[20000];
-                        using Stream stream = request.GetRequestStream();
+                        Stream stream = request.GetRequestStream();
                         stream.Read(g, 0, g.Length);
                         string @string;
                         @string = Encoding.UTF8.GetString(g);
@@ -138,7 +140,7 @@ namespace IPTV_Checker_2.Models
             }
             catch
             {
-                core.StatusBarText = "Failed to get server information..";
+                core.StatusBarText = "Failed to get server information.";
                 return serverStatus;
             }
         }
