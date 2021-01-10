@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window x:Class="IPTV_Checker_2.ServerStatusWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Server Status" Width="400" Height="270" Background="{DynamicResource MaterialDesignPaper}" FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" TextElement.FontSize="13" TextElement.FontWeight="Regular" TextElement.Foreground="{DynamicResource MaterialDesignBody}" TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Auto" WindowStartupLocation="CenterScreen">
+  <Border Padding="20">
+    <StackPanel Orientation="Vertical">
+      <Grid Height="150" Margin="0,0,0,5" ShowGridLines="True">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="1*" />
+          <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="1*" />
+          <RowDefinition Height="1*" />
+          <RowDefinition Height="1*" />
+          <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold">Current Connections:</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding CurrentConnections}" />
+        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold">Max Connections:</TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding MaxConnections}" />
+        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold">Creation Date:</TextBlock>
+        <TextBlock Grid.Row="2" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding CreationDate, StringFormat=d}" />
+        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold">Expiration Date:</TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding ExpirationDate, StringFormat=d}" />
+      </Grid>
+      <Button Name="btn_Ok" Grid.Row="4" Grid.ColumnSpan="2" Content="OK" Click="Btn_Ok_Click" />
+    </StackPanel>
+  </Border>
+</Window>
