@@ -115,6 +115,7 @@ namespace IPTV_Checker_2.Models
             get;
             set;
         }
+        public string Country { get; internal set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

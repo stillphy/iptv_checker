@@ -1,5 +1,6 @@
 using IPTV_Checker_2.Models;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -192,6 +193,23 @@ namespace IPTV_Checker_2
             set;
         }
 
+        public class JsonData
+        {
+            public String Status { get; set; }
+            public String Country { get; set; }
+            public String CountryCode { get; set; }
+            public String Region { get; set; }
+            public String RegionName { get; set; }
+            public String City { get; set; }
+            public String Zip { get; set; }
+            public Double Lat { get; set; }
+            public Double Lon { get; set; }
+            public String ISP { get; set; }
+            public String Org { get; set; }
+            public String AS { get; set; }
+            public String Query { get; set; }
+        }
+
         public static Core Instance
         {
             get
@@ -206,12 +224,8 @@ namespace IPTV_Checker_2
                             UserAgent = "Mozilla/5.0 (Windows NT 6.2; Win64; x64;) Gecko/20100101 Firefox/20.0",
                             Channels = new ObservableCollection<Channel>(),
                             Checked = "∞",
-                            StatusBarText = "Ready.."
+                            StatusBarText = "Ready..",
                         };
-                        Task.Run(delegate
-                        {
-                            instance.GetCountry();
-                        });
                         new Updater();
                     }
                     return instance;
@@ -230,15 +244,21 @@ namespace IPTV_Checker_2
         {
         }
 
-        private void GetCountry()
+        private string GetCountry(string url)
         {
             try
             {
-                Country = JObject.Parse(new WebClient().DownloadString("http://ip-api.com/json")).SelectToken("country").ToString().Trim();
+                Uri myUri = new Uri(url);
+                string host = myUri.Host;
+                var data = new WebClient().DownloadString("http://ip-api.com/json/" + host);
+                JsonData somedata = JsonConvert.DeserializeObject<JsonData>(data);
+                Country = somedata.Country;
+                return Country;
             }
             catch
             {
                 Country = "Unknown";
+                return Country;
             }
         }
 
@@ -253,16 +273,18 @@ namespace IPTV_Checker_2
                 {
                     string text, text2, text3;
                     text = item.Value.Trim();
+                    text2 = Regex.Match(text, "#.*").Value.Trim();
+                    text3 = text.Replace(text2, "").Trim();
+                    text2 = text2.Substring(text2.LastIndexOf(",") + 1);
                     string tagValue, tagValue2;
+                    string country = GetCountry(text3);
                     tagValue = GetTagValue("group-title", text);
                     tagValue2 = GetTagValue("tvg-logo", text);
                     GetTagValue("tvg-title", text);
                     GetTagValue("tvg-shift", text);
                     GetTagValue("aspect-ratio", text);
                     GetTagValue("url-epg", text);
-                    text2 = Regex.Match(text, "#.*").Value.Trim();
-                    text3 = text.Replace(text2, "").Trim();
-                    text2 = text2.Substring(text2.LastIndexOf(",") + 1);
+                    
                     if (text3.Trim() != string.Empty)
                     {
                         list.Add(new Channel
@@ -270,7 +292,8 @@ namespace IPTV_Checker_2
                             URL = text3,
                             Name = text2?.Trim(),
                             GroupTag = tagValue,
-                            TvgLogo = tagValue2
+                            TvgLogo = tagValue2,
+                            Country = country
                         });
                     }
                 }

@@ -9,7 +9,7 @@ namespace IPTV_Checker_2
 {
     public class Updater
     {
-        private string url = "https://github.com/LaneSh4d0w/iptv_checker_refixed/releases";
+        private string url = "https://github.com/LaneSh4d0w/iptv_checker/releases";
 
         public static string currentVersion = "2.6";
 
@@ -37,7 +37,7 @@ namespace IPTV_Checker_2
                 flag = Convert.ToBoolean(obj.SelectToken("is_must"));
                 if (a != currentVersion)
                 {
-                    MessageBox.Show(messageBoxText, "IPTV Checker " + Updater.currentVersion, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    MessageBox.Show(messageBoxText, "IPTV Checker " + currentVersion, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     Process.Start(fileName);
                     if (flag)
                     {

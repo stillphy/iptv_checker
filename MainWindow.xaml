@@ -324,6 +324,7 @@
                                 <DataGridTextColumn x:Name="groupColumn" Width="1*" Header="Group" Binding="{Binding GroupTag}" />
                                 <DataGridTextColumn x:Name="serverColumn" Width="1*" Header="Server" Binding="{Binding Server}" />
                                 <DataGridTextColumn Width="3*" Header="URL" Binding="{Binding URL}" />
+                                <DataGridTextColumn Width="3*" Header="Country" Binding="{Binding Country}" />
                             </DataGrid.Columns>
                             <DataGrid.RowStyle>
                                 <Style TargetType="{x:Type DataGridRow}">
