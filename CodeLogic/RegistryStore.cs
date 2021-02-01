@@ -54,7 +54,7 @@ namespace IPTV_Checker_2
         {
             try
             {
-                return Registry.GetValue(RegistryStore.AppNameRegistry, name, string.Empty).ToString();
+                return Registry.GetValue(AppNameRegistry, name, string.Empty).ToString();
             }
             catch
             {
@@ -66,7 +66,7 @@ namespace IPTV_Checker_2
         {
             try
             {
-                Registry.SetValue(RegistryStore.AppNameRegistry, name, value);
+                Registry.SetValue(AppNameRegistry, name, value);
             }
             catch
             {

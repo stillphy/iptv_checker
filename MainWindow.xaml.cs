@@ -31,7 +31,7 @@ namespace IPTV_Checker_2
             DataContext = core;
             Loaded += MainWindow_Loaded;
             datagrid.Sorting += Datagrid_Sorting;
-            Title += Updater.currentVersion;
+            Title += AboutWindow.currentVersion;
             LoadFromRegistry();
             btn_reset.IsEnabled = false;
         }
@@ -424,7 +424,7 @@ namespace IPTV_Checker_2
                    if (channel != null)
                    {
                        core.StatusBarText = "Getting server information: " + channel.Server + " Please wait sometimes it takes a long time";
-                       List<XpanelData.ServerStatus> serverStatus = new XpanelData(channel.URL).GetServerStatus();
+                       List<DTO.ServerStatus> serverStatus = new XpanelData(channel.URL).GetServerStatus();
                        foreach (var data in serverStatus)
                        {
                            if (data.CurrentConnections == 0 && data.MaxConnections == 0)

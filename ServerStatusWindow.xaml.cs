@@ -5,7 +5,7 @@ namespace IPTV_Checker_2
 {
     public partial class ServerStatusWindow : Window
     {
-        public ServerStatusWindow(XpanelData.ServerStatus serverStatus)
+        public ServerStatusWindow(DTO.ServerStatus serverStatus)
         {
             InitializeComponent();
             DataContext = serverStatus;

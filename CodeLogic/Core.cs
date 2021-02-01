@@ -1,7 +1,7 @@
+using IPTV_Checker_2.DTO;
 using IPTV_Checker_2.Models;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -193,23 +193,6 @@ namespace IPTV_Checker_2
             set;
         }
 
-        public class JsonData
-        {
-            public String Status { get; set; }
-            public String Country { get; set; }
-            public String CountryCode { get; set; }
-            public String Region { get; set; }
-            public String RegionName { get; set; }
-            public String City { get; set; }
-            public String Zip { get; set; }
-            public Double Lat { get; set; }
-            public Double Lon { get; set; }
-            public String ISP { get; set; }
-            public String Org { get; set; }
-            public String AS { get; set; }
-            public String Query { get; set; }
-        }
-
         public static Core Instance
         {
             get
@@ -226,7 +209,6 @@ namespace IPTV_Checker_2
                             Checked = "∞",
                             StatusBarText = "Ready..",
                         };
-                        new Updater();
                     }
                     return instance;
                 }

@@ -1,3 +1,4 @@
+using IPTV_Checker_2.DTO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,32 +12,6 @@ namespace IPTV_Checker_2.Models
 {
     public class XpanelData
     {
-        public class ServerStatus
-        {
-            public int CurrentConnections
-            {
-                get;
-                set;
-            }
-
-            public int MaxConnections
-            {
-                get;
-                set;
-            }
-
-            public DateTime ExpirationDate
-            {
-                get;
-                set;
-            }
-
-            public DateTime CreationDate
-            {
-                get;
-                set;
-            }
-        }
 
         private Core core = Core.Instance;
 
