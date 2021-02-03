@@ -10,6 +10,7 @@
     <LangVersion>8.0</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <RootNamespace>IPTV_Checker_2</RootNamespace>
+    <StartupObject>IPTV_Checker_2.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />

@@ -395,7 +395,7 @@ namespace IPTV_Checker_2
                 {
                     core.IsBusy = true;
                     core.StatusBarText = "XTREAM : Verifying channel data...";
-                    string text = await new XpanelData(((Channel)datagrid.SelectedItem).URL).GetAllChannelsInM3u8();
+                    string text = await new XpanelData().GetAllChannelsInM3u8(((Channel)datagrid.SelectedItem).URL);
                     if (string.IsNullOrWhiteSpace(text))
                     {
                         core.IsBusy = false;
@@ -424,7 +424,7 @@ namespace IPTV_Checker_2
                    if (channel != null)
                    {
                        core.StatusBarText = "Getting server information: " + channel.Server + " Please wait sometimes it takes a long time";
-                       List<DTO.ServerStatus> serverStatus = new XpanelData(channel.URL).GetServerStatus();
+                        List<DTO.ServerStatus> serverStatus = new XpanelData().GetServerStatus(channel.URL);
                        foreach (var data in serverStatus)
                        {
                            if (data.CurrentConnections == 0 && data.MaxConnections == 0)

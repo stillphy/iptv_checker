@@ -396,32 +396,23 @@ namespace IPTV_Checker_2
                 try
                 {
                     HttpWebRequest obj;
+                    ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
                     obj = (HttpWebRequest)WebRequest.Create(URL);
                     obj.Timeout = 1000 * Timeout;
                     obj.Method = "GET";
-                    obj.Proxy = WebRequest.DefaultWebProxy;
                     obj.ContentType = "application/x-www-form-urlencoded";
                     obj.KeepAlive = true;
-                    obj.Timeout = Timeout * 1000;
                     obj.UserAgent = UserAgent;
                     obj.AllowAutoRedirect = true;
                     using WebResponse webResponse = obj.GetResponse();
-                    char[] array;
-                    array = new char[2049];
-                    using StreamReader streamReader = new StreamReader(webResponse.GetResponseStream());
-                    streamReader.Read(array, 0, array.Length - 1);
-                    string text;
-                    text = new string(array);
-                    if (text.Length < 10)
+                    if (webResponse.ContentType.Contains("application/x-mpegURL") || webResponse.ContentType.Contains("application/vnd.apple.mpegurl"))
+                    {
+                        return Status.Online;
+                    }
+                    else
                     {
                         return Status.Offline;
                     }
-                    text = text.ToLower().Trim();
-                    if (text.Contains("html") || text.Contains("found") || text.Contains("authorized") || text.Contains("bad ") || text.Contains("denied") || text.Contains("allowed") || text.Contains("error"))
-                    {
-                        return Status.Offline;
-                    }
-                    return Status.Online;
                 }
                 catch (Exception)
                 {
@@ -469,7 +460,7 @@ namespace IPTV_Checker_2
                     stringBuilder.AppendLine(channel.URL);
                 }
                 File.WriteAllText(fileName, stringBuilder.ToString().Trim());
-                MessageBox.Show("File Has been saved successfully", "File Save", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                MessageBox.Show("File has been saved successfully", "File Save", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             else
             {

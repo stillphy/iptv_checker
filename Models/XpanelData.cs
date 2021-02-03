@@ -1,4 +1,6 @@
 using IPTV_Checker_2.DTO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,12 +47,12 @@ namespace IPTV_Checker_2.Models
             set;
         }
 
-        public XpanelData(string url)
+        public XpanelData()
         {
-            GenerateData(url);
+
         }
 
-        private void GenerateData(string url)
+        public void GenerateData(string url)
         {
             if (!string.IsNullOrWhiteSpace(url))
             {
@@ -63,8 +65,9 @@ namespace IPTV_Checker_2.Models
             }
         }
 
-        public async Task<string> GetAllChannelsInM3u8()
+        public async Task<string> GetAllChannelsInM3u8(string url)
         {
+            GenerateData(url);
             core.StatusBarText = "Contacting server..";
             try
             {
@@ -82,17 +85,32 @@ namespace IPTV_Checker_2.Models
             }
         }
 
-        public List<ServerStatus> GetServerStatus()
+        public List<ServerStatus> GetServerStatus(string url)
         {
             List<ServerStatus> serverStatus = new List<ServerStatus>();
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpWebRequest request = WebRequest.CreateHttp(Url);
+                    HttpWebRequest request = WebRequest.CreateHttp(url);
                     request.Method = "GET";
                     if (request.HaveResponse)
                     {
+
+                        JsonSerializer serializer = new JsonSerializer();
+                        using (FileStream s = File.Open("bigfile.json", FileMode.Open))
+                        using (StreamReader sr = new StreamReader(s))
+                        using (JsonReader reader = new JsonTextReader(sr))
+                        {
+                            while (reader.Read())
+                            {
+                                // deserialize only when there's "{" character in the stream
+                                if (reader.TokenType == JsonToken.StartObject)
+                                {
+                                    serializer.Deserialize<ServerStatus>(reader);
+                                }
+                            }
+                        }
                         byte[] g;
                         g = new byte[20000];
                         Stream stream = request.GetRequestStream();
