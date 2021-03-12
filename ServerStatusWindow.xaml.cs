@@ -1,14 +1,17 @@
-using IPTV_Checker_2.Models;
+using IPTV_Checker_2.DTO;
+using System;
 using System.Windows;
 
 namespace IPTV_Checker_2
 {
     public partial class ServerStatusWindow : Window
     {
-        public ServerStatusWindow(DTO.ServerStatus serverStatus)
+        public ServerStatusWindow(ServerStatus serverStatus, string creationTime, string expireTime)
         {
             InitializeComponent();
-            DataContext = serverStatus;
+            creationdate.Text = creationTime.ToString();
+            expirationdate.Text = expireTime.ToString();
+            DataContext = serverStatus.user_info;
         }
 
         private void Btn_Ok_Click(object sender, RoutedEventArgs e)

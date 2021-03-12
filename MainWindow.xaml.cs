@@ -9,7 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -352,7 +351,7 @@ namespace IPTV_Checker_2
                 stringBuilder.AppendLine(core.Channels[item].URL);
             }
             Clipboard.SetText(stringBuilder.ToString().Trim());
-            MessageBox.Show("Channels have been copied to Clipboard..", "Copy Channels as", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            MessageBox.Show("Channels have been copied to clipboard.", "Copy Channels as", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
 
         private void Menu_copy_url_Click(object sender, RoutedEventArgs e)
@@ -366,7 +365,7 @@ namespace IPTV_Checker_2
                     stringBuilder.AppendLine(core.Channels[item].URL);
                 }
                 Clipboard.SetText(stringBuilder.ToString().Trim());
-                MessageBox.Show("Channels have been copied to Clipboard..", "Copy Channels", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                MessageBox.Show("Links have been copied to clipboard.", "Copy Channels", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             catch
             {
@@ -416,34 +415,19 @@ namespace IPTV_Checker_2
 
         private void Menu_get_server_Status_Click(object sender, RoutedEventArgs e)
         {
-            Task.Run(delegate {
-                Dispatcher.Invoke(delegate
+            Dispatcher.Invoke(delegate
+            {
+                core.IsBusy = true;
+                Channel channel = (Channel)datagrid.SelectedItem;
+                if (channel != null)
                 {
-                   core.IsBusy = true;
-                   Channel channel = (Channel)datagrid.SelectedItem;
-                   if (channel != null)
-                   {
-                       core.StatusBarText = "Getting server information: " + channel.Server + " Please wait sometimes it takes a long time";
-                        List<DTO.ServerStatus> serverStatus = new XpanelData().GetServerStatus(channel.URL);
-                       foreach (var data in serverStatus)
-                       {
-                           if (data.CurrentConnections == 0 && data.MaxConnections == 0)
-                           {
-                               core.IsBusy = false;
-                               core.StatusBarText = "Failed to get server status, Server doesn't support this feature!";
-                               MessageBox.Show("Failed to get server status..", "Server Status", MessageBoxButton.OK, MessageBoxImage.Hand);
-                           }
-                           else
-                           {
-                               ServerStatusWindow serverStatusWindow = new ServerStatusWindow(data);
-                               core.IsBusy = false;
-                               serverStatusWindow.ShowDialog();
-                           }
-                       }
-                   }
-               });
+                    XpanelData xp = new XpanelData();
+                    Uri uri = new Uri(channel.URL);
+                    core.StatusBarText = "Getting server information: " + channel.Server + ".";
+                    string player_url = "http://" + uri.Authority + "/player_api.php" + uri.Query;
+                    xp.GetServerStatus(player_url);
+                }
             });
-           
         }
 
         private void Menu_play_Click(object sender, RoutedEventArgs e)
@@ -491,7 +475,7 @@ namespace IPTV_Checker_2
                     Process.Start(arguments: ((Channel)datagrid.SelectedItem).URL, fileName: core.Vlc_Location);
                     return;
                 }
-                MessageBox.Show("Please Install VLC Player or use settings to locate VLC Location", "VLC Player", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("Please install VLC Player or use settings to locate VLC Location", "VLC Player", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
             catch
             {

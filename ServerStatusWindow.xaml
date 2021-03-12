@@ -14,13 +14,13 @@
           <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold">Current Connections:</TextBlock>
-        <TextBlock Grid.Row="0" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding CurrentConnections}" />
+        <TextBlock Grid.Row="0" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding active_cons}" />
         <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold">Max Connections:</TextBlock>
-        <TextBlock Grid.Row="1" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding MaxConnections}" />
+        <TextBlock Grid.Row="1" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding max_connections}" />
         <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold">Creation Date:</TextBlock>
-        <TextBlock Grid.Row="2" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding CreationDate, StringFormat=d}" />
+        <TextBlock Grid.Row="2" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Name="creationdate" Text="{Binding created_at, StringFormat=d}" />
         <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold">Expiration Date:</TextBlock>
-        <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Text="{Binding ExpirationDate, StringFormat=d}" />
+        <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,0" VerticalAlignment="Center" Name="expirationdate" Text="{Binding exp_date, StringFormat=d}" />
       </Grid>
       <Button Name="btn_Ok" Grid.Row="4" Grid.ColumnSpan="2" Content="OK" Click="Btn_Ok_Click" />
     </StackPanel>

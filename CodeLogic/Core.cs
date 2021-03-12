@@ -226,6 +226,7 @@ namespace IPTV_Checker_2
         {
         }
 
+        // TODO : specific tab for country searching.
         private string GetCountry(string url)
         {
             try
@@ -259,7 +260,6 @@ namespace IPTV_Checker_2
                     text3 = text.Replace(text2, "").Trim();
                     text2 = text2.Substring(text2.LastIndexOf(",") + 1);
                     string tagValue, tagValue2;
-                    string country = GetCountry(text3);
                     tagValue = GetTagValue("group-title", text);
                     tagValue2 = GetTagValue("tvg-logo", text);
                     GetTagValue("tvg-title", text);
@@ -275,7 +275,6 @@ namespace IPTV_Checker_2
                             Name = text2?.Trim(),
                             GroupTag = tagValue,
                             TvgLogo = tagValue2,
-                            Country = country
                         });
                     }
                 }

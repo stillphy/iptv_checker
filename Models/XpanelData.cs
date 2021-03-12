@@ -1,13 +1,7 @@
 using IPTV_Checker_2.DTO;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace IPTV_Checker_2.Models
@@ -52,104 +46,57 @@ namespace IPTV_Checker_2.Models
 
         }
 
-        public void GenerateData(string url)
-        {
-            if (!string.IsNullOrWhiteSpace(url))
-            {
-                var uribasedonurl = new Uri(url);
-                uribasedonurl.GetComponents(UriComponents.PathAndQuery, UriFormat.UriEscaped);
-                Host = uribasedonurl.IdnHost;
-                Userdata = uribasedonurl.Query;
-                AllChannelsUrl = Host + "get.php" + Userdata;
-                ServerInfoUrl = Host + "panel_api.php" + Userdata;
-            }
-        }
-
         public async Task<string> GetAllChannelsInM3u8(string url)
         {
-            GenerateData(url);
-            core.StatusBarText = "Contacting server..";
             try
             {
-                using HttpClient client = new HttpClient(new HttpClientHandler
-                {
-                    AutomaticDecompression = (DecompressionMethods.GZip | DecompressionMethods.Deflate)
-                });
-                using HttpResponseMessage httpMessage = await client.GetAsync(AllChannelsUrl);
-                return await httpMessage.Content.ReadAsStringAsync();
+                using HttpClient client = new HttpClient();
+                return await client.GetStringAsync(url);
             }
-            catch
+            catch (HttpRequestException)
             {
                 core.StatusBarText = "Nothing found in server..";
                 return null;
             }
         }
 
-        public List<ServerStatus> GetServerStatus(string url)
+        public async void GetServerStatus(string url)
         {
-            List<ServerStatus> serverStatus = new List<ServerStatus>();
             try
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    HttpWebRequest request = WebRequest.CreateHttp(url);
-                    request.Method = "GET";
-                    if (request.HaveResponse)
-                    {
+                using HttpClient client = new HttpClient();
+                var response = await client.GetStringAsync(url);
 
-                        JsonSerializer serializer = new JsonSerializer();
-                        using (FileStream s = File.Open("bigfile.json", FileMode.Open))
-                        using (StreamReader sr = new StreamReader(s))
-                        using (JsonReader reader = new JsonTextReader(sr))
-                        {
-                            while (reader.Read())
-                            {
-                                // deserialize only when there's "{" character in the stream
-                                if (reader.TokenType == JsonToken.StartObject)
-                                {
-                                    serializer.Deserialize<ServerStatus>(reader);
-                                }
-                            }
-                        }
-                        byte[] g;
-                        g = new byte[20000];
-                        Stream stream = request.GetRequestStream();
-                        stream.Read(g, 0, g.Length);
-                        string @string;
-                        @string = Encoding.UTF8.GetString(g);
-                        ExtractFromPartialJson(@string, "exp_date");
-                        serverStatus.Add(new ServerStatus
-                        {
-                            CurrentConnections = Convert.ToInt32(ExtractFromPartialJson(@string, "active_cons")),
-                            MaxConnections = Convert.ToInt32(ExtractFromPartialJson(@string, "max_connections")),
-                            CreationDate = UnixTimeStampToDateTime(Convert.ToDouble(ExtractFromPartialJson(@string, "created_at"))),
-                            ExpirationDate = UnixTimeStampToDateTime(Convert.ToDouble(ExtractFromPartialJson(@string, "exp_date")))
-                        });
-                        core.StatusBarText = "Finished getting server information";
-                    }
-                }
-                return serverStatus;
+                ServerStatus serverStatus = JsonConvert.DeserializeObject<ServerStatus>(response);
+
+                string creationTime = getTimeStampToDateTime(serverStatus.user_info.created_at);
+                string expireTime = getTimeStampToDateTime(serverStatus.user_info.exp_date);
+
+                ServerStatusWindow sswindow = new ServerStatusWindow(serverStatus, creationTime, expireTime);
+                core.StatusBarText = "Finished getting server information";
+                core.IsBusy = false;
+                sswindow.ShowDialog();
             }
-            catch
+            catch (HttpRequestException e)
             {
-                core.StatusBarText = "Failed to get server information.";
-                return serverStatus;
+                core.StatusBarText = "An error has occured while getting server information : " + e.Message;
             }
         }
 
-        private string ExtractFromPartialJson(string json, string tag)
+        public string getTimeStampToDateTime(long timestamp)
         {
-            Regex regex = new Regex("\"" + tag.ToLower() + "\":\"(.*?)\"", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            if (!regex.IsMatch(json.ToLower()))
-            {
-                return string.Empty;
-            }
-            return regex.Match(json.ToLower()).Groups[1].Value;
-        }
+            // Some conversions
+            // First make a System.DateTime equivalent to the UNIX Epoch.
+            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
-        private DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTimeStamp).ToLocalTime();
+            // Add the number of seconds in UNIX timestamp to be converted.
+            dateTime = dateTime.AddSeconds(timestamp);
+
+            // The dateTime now contains the right date/time so to format the string,
+            // use the standard formatting methods of the DateTime object.
+            string thetime = dateTime.ToShortDateString() + " " + dateTime.ToShortTimeString();
+
+            return thetime;
         }
     }
 }

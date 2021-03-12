@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
 
 namespace IPTV_Checker_2.Models
 {
@@ -13,6 +12,10 @@ namespace IPTV_Checker_2.Models
         private Status _status;
 
         private string _url;
+
+        public string Country { get; internal set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int Id
         {
@@ -39,13 +42,11 @@ namespace IPTV_Checker_2.Models
             set;
         } = "";
 
-
         public string TvgName
         {
             get;
             set;
         } = "";
-
 
         public string TvgShift
         {
@@ -53,20 +54,17 @@ namespace IPTV_Checker_2.Models
             set;
         } = "";
 
-
         public string AspectRatio
         {
             get;
             set;
         } = "";
 
-
         public string Url_EPG
         {
             get;
             set;
         } = "";
-
 
         public string Name
         {
@@ -115,9 +113,6 @@ namespace IPTV_Checker_2.Models
             get;
             set;
         }
-        public string Country { get; internal set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public Channel()
         {
@@ -135,17 +130,16 @@ namespace IPTV_Checker_2.Models
 
         private string GetServer(string url)
         {
-            Regex regex;
-            regex = new Regex("\\/\\/.*?\\/");
-            if (url != null)
+            if (url != string.Empty && url != null)
             {
-                if (regex.IsMatch(url))
-                {
-                    return regex.Match(url).Value.Replace("/", "").Trim();
-                }
+                Uri uri = new Uri(url);
+
+                return uri.Authority;
+            }
+            else
+            {
                 return string.Empty;
             }
-            return string.Empty;
         }
 
         public override bool Equals(object obj)
