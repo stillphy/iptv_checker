@@ -69,10 +69,10 @@ namespace IPTV_Checker_2.Models
 
                 ServerStatus serverStatus = JsonConvert.DeserializeObject<ServerStatus>(response);
 
-                string creationTime = getTimeStampToDateTime(serverStatus.user_info.created_at);
-                string expireTime = getTimeStampToDateTime(serverStatus.user_info.exp_date);
+                serverStatus.user_info.created_at = getTimeStampToDateTime(Convert.ToInt32(serverStatus.user_info.created_at));
+                serverStatus.user_info.exp_date = getTimeStampToDateTime(Convert.ToInt32(serverStatus.user_info.exp_date));
 
-                ServerStatusWindow sswindow = new ServerStatusWindow(serverStatus, creationTime, expireTime);
+                ServerStatusWindow sswindow = new ServerStatusWindow(serverStatus);
                 core.StatusBarText = "Finished getting server information";
                 core.IsBusy = false;
                 sswindow.ShowDialog();

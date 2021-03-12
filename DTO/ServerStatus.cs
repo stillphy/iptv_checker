@@ -10,10 +10,10 @@ namespace IPTV_Checker_2.DTO
         public string message { get; set; }
         public int auth { get; set; }
         public string status { get; set; }
-        public int exp_date { get; set; }
+        public string exp_date { get; set; }
         public string is_trial { get; set; }
         public int active_cons { get; set; }
-        public int created_at { get; set; }
+        public string created_at { get; set; }
         public int max_connections { get; set; }
         public List<string> allowed_output_formats { get; set; }
     }

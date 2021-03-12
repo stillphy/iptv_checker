@@ -6,11 +6,9 @@ namespace IPTV_Checker_2
 {
     public partial class ServerStatusWindow : Window
     {
-        public ServerStatusWindow(ServerStatus serverStatus, string creationTime, string expireTime)
+        public ServerStatusWindow(ServerStatus serverStatus)
         {
             InitializeComponent();
-            creationdate.Text = creationTime.ToString();
-            expirationdate.Text = expireTime.ToString();
             DataContext = serverStatus.user_info;
         }
 
