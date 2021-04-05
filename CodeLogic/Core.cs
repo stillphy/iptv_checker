@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -226,22 +227,23 @@ namespace IPTV_Checker_2
         {
         }
 
-        // TODO : specific tab for country searching.
-        private string GetCountry(string url)
+        public async Task<string> GetCountryAsync(string url)
         {
             try
             {
                 Uri myUri = new Uri(url);
                 string host = myUri.Host;
-                var data = new WebClient().DownloadString("http://ip-api.com/json/" + host);
+                HttpClient client = new HttpClient();
+                var data = await client.GetStringAsync("http://ip-api.com/json/" + host);
                 JsonData somedata = JsonConvert.DeserializeObject<JsonData>(data);
-                Country = somedata.Country;
-                return Country;
+                isBusy = false;
+                return somedata.Country;
             }
-            catch
+            catch (WebException e)
             {
+                isBusy = false;
                 Country = "Unknown";
-                return Country;
+                throw e;
             }
         }
 
@@ -299,18 +301,9 @@ namespace IPTV_Checker_2
                 return;
             }
             int numberofchannels = channels.Count;
-            for (int i = 0; i < numberofchannels; i++)
-            {
-                if (Regex.IsMatch(channels[i].URL, "[?&]([^&]+)=([^&]+)"))
-                {
-                    channels[i].Name.Replace(channels[i].Name, "XTREAM - " + channels[i].Name);
-                }
-            }
             channels = channels.Where((Channel w) => w != null).ToList();
-            List<Channel> list;
-            list = channels.Except(Channel_Full).ToList();
-            int num;
-            num = channels.Count - list.Count;
+            List<Channel> list = channels.Except(Channel_Full).ToList();
+            int num = channels.Count - list.Count;
             Channel_Full.AddRange(list);
             StatusBarText = ((num != 0) ? $"Found {channels.Count}, imported {list.Count} channels, and skipped {num} duplicates." : $"Imported {list.Count()} channels.");
         }
@@ -319,8 +312,7 @@ namespace IPTV_Checker_2
         {
             Regex regex;
             regex = new Regex(tag + ".*?\".*?\"", RegexOptions.IgnoreCase);
-            string result;
-            result = "";
+            string result = "";
             if (regex.IsMatch(str))
             {
                 result = Regex.Match(regex.Match(str).Value.Trim(), "\".*?\"").Value.Replace("\"", "").Trim();
@@ -394,9 +386,8 @@ namespace IPTV_Checker_2
                 }
                 try
                 {
-                    HttpWebRequest obj;
+                    HttpWebRequest obj = (HttpWebRequest)WebRequest.Create(URL);
                     ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
-                    obj = (HttpWebRequest)WebRequest.Create(URL);
                     obj.Timeout = 1000 * Timeout;
                     obj.Method = "GET";
                     obj.ContentType = "application/x-www-form-urlencoded";
@@ -404,7 +395,7 @@ namespace IPTV_Checker_2
                     obj.UserAgent = UserAgent;
                     obj.AllowAutoRedirect = true;
                     using WebResponse webResponse = obj.GetResponse();
-                    if (webResponse.ContentType.Contains("application/x-mpegURL") || webResponse.ContentType.Contains("application/vnd.apple.mpegurl"))
+                    if (webResponse.ContentType.Contains("application/x-mpegURL") || webResponse.ContentType.Contains("application/vnd.apple.mpegurl") || webResponse.ContentType.Contains("application/octet-stream"))
                     {
                         return Status.Online;
                     }
@@ -448,8 +439,7 @@ namespace IPTV_Checker_2
                 stringBuilder.AppendLine("#EXTM3U");
                 foreach (Channel channel in Channels)
                 {
-                    string text;
-                    text = "";
+                    string text = "";
                     text = ((channel.GroupTag != "") ? (text + "group-title=\"" + channel.GroupTag + "\"") : text);
                     text = ((channel.TvgLogo != "") ? (text + " tvg-logo=\"" + channel.TvgLogo + "\"") : text);
                     text = ((channel.TvgName != "") ? (text + " tvg-name=\"" + channel.TvgName + "\"") : text);

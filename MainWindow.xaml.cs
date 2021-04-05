@@ -42,8 +42,7 @@ namespace IPTV_Checker_2
 
         private void Btn_add_m3u8_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog;
-            openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 FileName = "",
                 Filter = "M3u files (*.m3u8; *.m3u) | *.m3u8; *.m3u",
@@ -53,8 +52,7 @@ namespace IPTV_Checker_2
             if (openFileDialog.FileName != string.Empty)
             {
                 string str = File.ReadAllText(openFileDialog.FileName);
-                List<Channel> channels;
-                channels = core.ParseM3u8(str);
+                List<Channel> channels = core.ParseM3u8(str);
                 core.Add_channels(channels);
                 string directoryName = Path.GetDirectoryName(openFileDialog.FileName);
                 core.LastDir = directoryName;
@@ -75,14 +73,12 @@ namespace IPTV_Checker_2
 
         private void Btn_add_text_Click(object sender, RoutedEventArgs e)
         {
-            AddTextWindow addTextWindow;
-            addTextWindow = new AddTextWindow();
+            AddTextWindow addTextWindow = new AddTextWindow();
             addTextWindow.ShowDialog();
             if (addTextWindow.str.Length != 0)
             {
                 int count = core.Channel_Full.Count;
-                List<Channel> channels;
-                channels = core.ParseM3u8(addTextWindow.str);
+                List<Channel> channels = core.ParseM3u8(addTextWindow.str);
                 core.Add_channels(channels);
                 txt_search.Text = string.Empty;
                 radio_all.IsChecked = true;
@@ -127,10 +123,8 @@ namespace IPTV_Checker_2
 
         private void Btn_down_Click(object sender, RoutedEventArgs e)
         {
-            List<int> selectedIndexes;
-            selectedIndexes = GetSelectedIndexes();
-            int num;
-            num = selectedIndexes[selectedIndexes.Count - 1];
+            List<int> selectedIndexes = GetSelectedIndexes();
+            int num = selectedIndexes[selectedIndexes.Count - 1];
             selectedIndexes.Reverse();
             if (num == core.Channels.Count - 1)
             {
@@ -169,8 +163,7 @@ namespace IPTV_Checker_2
 
         private void Btn_up_Click(object sender, RoutedEventArgs e)
         {
-            List<int> selectedIndexes;
-            selectedIndexes = GetSelectedIndexes();
+            List<int> selectedIndexes = GetSelectedIndexes();
             if (selectedIndexes[0] == 0)
             {
                 return;
@@ -260,8 +253,7 @@ namespace IPTV_Checker_2
 
         private void FilterResults()
         {
-            Status status;
-            status = Status.All;
+            Status status = Status.All;
             if (radio_all.IsChecked == true)
             {
                 status = Status.All;
@@ -278,8 +270,7 @@ namespace IPTV_Checker_2
             {
                 status = Status.Unchecked;
             }
-            List<Channel> list;
-            list = ((status == Status.All) ? core.Channel_Full : core.Channel_Full.Where((Channel w) => w.Status == status).ToList());
+            List<Channel> list = (status == Status.All) ? core.Channel_Full : core.Channel_Full.Where((Channel w) => w.Status == status).ToList();
             if (bindingpath != "")
             {
                 if (sortDirection == ListSortDirection.Ascending)
@@ -312,8 +303,7 @@ namespace IPTV_Checker_2
 
         private List<int> GetSelectedIndexes()
         {
-            List<int> list;
-            list = new List<int>();
+            List<int> list = new List<int>();
             for (int i = 0; i < datagrid.Items.Count; i++)
             {
                 if (datagrid.SelectedItems.Contains(datagrid.Items[i]))
@@ -326,8 +316,7 @@ namespace IPTV_Checker_2
 
         private void LoadFromRegistry()
         {
-            RegistryStore registryStore;
-            registryStore = new RegistryStore();
+            RegistryStore registryStore = new RegistryStore();
             core.Vlc_Location = registryStore.Vlc_Location;
             core.UserAgent = registryStore.UserAgent;
             core.NumTries = registryStore.NumTries;
@@ -356,20 +345,14 @@ namespace IPTV_Checker_2
 
         private void Menu_copy_url_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                List<int> selectedIndexes = GetSelectedIndexes();
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (int item in selectedIndexes)
-                {
-                    stringBuilder.AppendLine(core.Channels[item].URL);
-                }
-                Clipboard.SetText(stringBuilder.ToString().Trim());
-                MessageBox.Show("Links have been copied to clipboard.", "Copy Channels", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-            }
-            catch
-            {
-            }
+           List<int> selectedIndexes = GetSelectedIndexes();
+           StringBuilder stringBuilder = new StringBuilder();
+           foreach (int item in selectedIndexes)
+           {
+                stringBuilder.AppendLine(core.Channels[item].URL);
+           }
+           Clipboard.SetText(stringBuilder.ToString().Trim());
+           MessageBox.Show("Links have been copied to clipboard.", "Copy Channels", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
 
         private void Menu_delete_Click(object sender, RoutedEventArgs e)
@@ -403,8 +386,7 @@ namespace IPTV_Checker_2
                     }
                     else
                     {
-                        List<Channel> channels;
-                        channels = core.ParseM3u8(text);
+                        List<Channel> channels = core.ParseM3u8(text);
                         core.Add_channels(channels);
                         FilterResults();
                         core.IsBusy = false;
@@ -430,6 +412,22 @@ namespace IPTV_Checker_2
             });
         }
 
+        private void Menu_get_country_channels_Click(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.Invoke(async delegate
+            {
+                core.IsBusy = true;
+                Channel channel = (Channel)datagrid.SelectedItem;
+                if (channel != null)
+                {
+                    core.StatusBarText = "Getting country for server : " + channel.Server + ".";
+                    string result = await core.GetCountryAsync(channel.URL);
+                    channel.Country = result;
+                    countryColumn.ReadLocalValue((DependencyProperty)datagrid.SelectedItem);
+                }
+            });
+        }
+
         private void Menu_play_Click(object sender, RoutedEventArgs e)
         {
             Play_in_VLC();
@@ -439,10 +437,8 @@ namespace IPTV_Checker_2
         {
             try
             {
-                Channel channel;
-                channel = (Channel)datagrid.SelectedItem;
-                RenameWindow renameWindow;
-                renameWindow = new RenameWindow(channel.Name);
+                Channel channel = (Channel)datagrid.SelectedItem;
+                RenameWindow renameWindow = new RenameWindow(channel.Name);
                 renameWindow.ShowDialog();
                 if (renameWindow.ChannelName.Trim() != string.Empty)
                 {
@@ -457,8 +453,7 @@ namespace IPTV_Checker_2
 
         private object OrderSource(Channel b, string name)
         {
-            PropertyInfo runtimeProperty;
-            runtimeProperty = b.GetType().GetRuntimeProperty(name);
+            PropertyInfo runtimeProperty = b.GetType().GetRuntimeProperty(name);
             if (runtimeProperty != null)
             {
                 return runtimeProperty.GetValue(b);
@@ -504,9 +499,8 @@ namespace IPTV_Checker_2
 
         private void Sort()
         {
-            List<Channel> list;
-            list = new List<Channel>();
-            list = ((sortDirection != 0) ? core.Channels.OrderByDescending((Channel w) => OrderSource(w, bindingpath)).ToList() : core.Channels.OrderBy((Channel w) => OrderSource(w, bindingpath)).ToList());
+            List<Channel> list = new List<Channel>();
+            list = (sortDirection != 0) ? core.Channels.OrderByDescending((Channel w) => OrderSource(w, bindingpath)).ToList() : core.Channels.OrderBy((Channel w) => OrderSource(w, bindingpath)).ToList();
             core.Channels.Clear();
             foreach (Channel item in list)
             {

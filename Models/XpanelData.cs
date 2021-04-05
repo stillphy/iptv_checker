@@ -69,8 +69,8 @@ namespace IPTV_Checker_2.Models
 
                 ServerStatus serverStatus = JsonConvert.DeserializeObject<ServerStatus>(response);
 
-                serverStatus.user_info.created_at = getTimeStampToDateTime(Convert.ToInt32(serverStatus.user_info.created_at));
-                serverStatus.user_info.exp_date = getTimeStampToDateTime(Convert.ToInt32(serverStatus.user_info.exp_date));
+                serverStatus.user_info.created_at = GetTimeStampToDateTime(Convert.ToInt32(serverStatus.user_info.created_at));
+                serverStatus.user_info.exp_date = GetTimeStampToDateTime(Convert.ToInt32(serverStatus.user_info.exp_date));
 
                 ServerStatusWindow sswindow = new ServerStatusWindow(serverStatus);
                 core.StatusBarText = "Finished getting server information";
@@ -80,10 +80,11 @@ namespace IPTV_Checker_2.Models
             catch (HttpRequestException e)
             {
                 core.StatusBarText = "An error has occured while getting server information : " + e.Message;
+                core.IsBusy = false;
             }
         }
 
-        public string getTimeStampToDateTime(long timestamp)
+        public string GetTimeStampToDateTime(long timestamp)
         {
             // Some conversions
             // First make a System.DateTime equivalent to the UNIX Epoch.

@@ -1,4 +1,5 @@
-using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace IPTV_Checker_2
@@ -11,13 +12,14 @@ namespace IPTV_Checker_2
         public AboutWindow()
         {
             InitializeComponent();
-            CheckForUpdates();
+            _ = CheckForUpdatesAsync();
         }
 
 
-        public void CheckForUpdates()
+        public async Task CheckForUpdatesAsync()
         {
-            string actualversion = new WebClient().DownloadString(url);
+            using HttpClient client = new HttpClient();
+            var actualversion = await client.GetStringAsync(url);
 
             if (actualversion == currentVersion)
             {

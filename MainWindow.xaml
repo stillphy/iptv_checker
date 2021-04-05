@@ -172,7 +172,7 @@
                             <TextBlock HorizontalAlignment="Center" FontSize="18" Text="Settings" />
                         </Grid>
                     </Button>
-                    <Button Name="btn_about" Margin="10" ToolTip="Who is us?" Click="Btn_about_Click">
+                    <Button Name="btn_about" Margin="10" ToolTip="Who are we ?" Click="Btn_about_Click">
                         <Grid Width="150">
                             <PackIcon VerticalAlignment="Center" Kind="About" xmlns="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf" />
                             <TextBlock HorizontalAlignment="Center" FontSize="18" Text="About" />
@@ -324,7 +324,7 @@
                                 <DataGridTextColumn x:Name="groupColumn" Width="1*" Header="Group" Binding="{Binding GroupTag}" />
                                 <DataGridTextColumn x:Name="serverColumn" Width="1*" Header="Server" Binding="{Binding Server}" />
                                 <DataGridTextColumn Width="3*" Header="URL" Binding="{Binding URL}" />
-                                <DataGridTextColumn Width="3*" Header="Country" Binding="{Binding Country}" />
+                                <DataGridTextColumn x:Name="countryColumn" Width="3*" Header="Country" Binding="{Binding Country}" />
                             </DataGrid.Columns>
                             <DataGrid.RowStyle>
                                 <Style TargetType="{x:Type DataGridRow}">
@@ -372,6 +372,11 @@
                                     <MenuItem Name="Menu_get_server_channels" Header="Get Server Channels" Click="Menu_get_server_channels_Click">
                                         <MenuItem.Icon>
                                             <PackIcon VerticalAlignment="Center" Kind="ServerNetwork" xmlns="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Name="Menu_get_country_channels" Header="Get Channels' Country" Click="Menu_get_country_channels_Click">
+                                        <MenuItem.Icon>
+                                            <PackIcon VerticalAlignment="Center" xmlns="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <Separator/>

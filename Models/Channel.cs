@@ -144,16 +144,11 @@ namespace IPTV_Checker_2.Models
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj == null && !(obj is Channel))
             {
                 return false;
             }
-            if (!(obj is Channel))
-            {
-                return false;
-            }
-            Channel channel;
-            channel = obj as Channel;
+            Channel channel = obj as Channel;
             if (channel == null)
             {
                 return false;

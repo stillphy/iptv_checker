@@ -56,7 +56,7 @@ namespace IPTV_Checker_2
             {
                 return Registry.GetValue(AppNameRegistry, name, string.Empty).ToString();
             }
-            catch
+            catch (Exception)
             {
                 return string.Empty;
             }
@@ -64,53 +64,35 @@ namespace IPTV_Checker_2
 
         public static void SetRegistry(string name, string value)
         {
-            try
-            {
-                Registry.SetValue(AppNameRegistry, name, value);
-            }
-            catch
-            {
-            }
+            Registry.SetValue(AppNameRegistry, name, value);
         }
 
         public RegistryStore()
         {
             Vlc_Location = Find_VLC();
-            string fromRegistry;
-            fromRegistry = GetFromRegistry("User_Agent");
-            if (fromRegistry != string.Empty)
+            if (GetFromRegistry("User_Agent") != string.Empty)
             {
-                UserAgent = fromRegistry;
+                UserAgent = GetFromRegistry("User_Agent");
             }
-            string fromRegistry2;
-            fromRegistry2 = GetFromRegistry("VLC_Location");
-            if (fromRegistry2 != string.Empty)
+            if (GetFromRegistry("VLC_Location") != string.Empty)
             {
-                Vlc_Location = fromRegistry2;
+                Vlc_Location = GetFromRegistry("VLC_Location");
             }
-            string fromRegistry3;
-            fromRegistry3 = GetFromRegistry("Timeout");
-            if (fromRegistry3 != string.Empty)
+            if (GetFromRegistry("Timeout") != string.Empty)
             {
-                Timeout = int.Parse(fromRegistry3);
+                Timeout = Convert.ToInt32(GetFromRegistry("Timeout"));
             }
-            string fromRegistry4;
-            fromRegistry4 = GetFromRegistry("NumTries");
-            if (fromRegistry4 != string.Empty)
+            if (GetFromRegistry("NumTries") != string.Empty)
             {
-                NumTries = int.Parse(fromRegistry4);
+                NumTries = Convert.ToInt32(GetFromRegistry("NumTries"));
             }
-            string fromRegistry5;
-            fromRegistry5 = GetFromRegistry("NumThreads");
-            if (fromRegistry5 != string.Empty)
+            if (GetFromRegistry("NumThreads") != string.Empty)
             {
-                NumThreads = int.Parse(fromRegistry5);
+                NumThreads = Convert.ToInt32(GetFromRegistry("NumThreads"));
             }
-            string fromRegistry6;
-            fromRegistry6 = GetFromRegistry("LastDir");
-            if (fromRegistry6 != string.Empty)
+            if (GetFromRegistry("LastDir") != string.Empty)
             {
-                LastDir = fromRegistry6;
+                LastDir = GetFromRegistry("LastDir");
             }
         }
 
