@@ -72,7 +72,7 @@ namespace IPTV_Checker_2.Models
             set
             {
                 _name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -82,9 +82,9 @@ namespace IPTV_Checker_2.Models
             set
             {
                 _url = value;
-                OnPropertyChanged("URL");
+                OnPropertyChanged(nameof(URL));
                 _server = GetServer(value);
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -94,7 +94,7 @@ namespace IPTV_Checker_2.Models
             set
             {
                 _server = value;
-                OnPropertyChanged("Server");
+                OnPropertyChanged(nameof(Server));
             }
         }
 
@@ -104,7 +104,7 @@ namespace IPTV_Checker_2.Models
             set
             {
                 _status = value;
-                OnPropertyChanged("Status");
+                OnPropertyChanged(nameof(Status));
             }
         }
 

@@ -56,7 +56,7 @@ namespace IPTV_Checker_2
             set
             {
                 isBusy = value;
-                OnPropertyChanged("IsBusy");
+                OnPropertyChanged(nameof(IsBusy));
             }
         }
 
@@ -66,7 +66,7 @@ namespace IPTV_Checker_2
             set
             {
                 caseSensitiveSearch = value;
-                OnPropertyChanged("CaseSensitiveSearch");
+                OnPropertyChanged(nameof(CaseSensitiveSearch));
             }
         }
 
@@ -76,7 +76,7 @@ namespace IPTV_Checker_2
             set
             {
                 statusBarText = value;
-                OnPropertyChanged("StatusBarText");
+                OnPropertyChanged(nameof(StatusBarText));
             }
         }
 
@@ -86,7 +86,7 @@ namespace IPTV_Checker_2
             set
             {
                 _checked_Percentage = value;
-                OnPropertyChanged("CheckedPercentage");
+                OnPropertyChanged(nameof(CheckedPercentage));
             }
         }
 
@@ -96,7 +96,7 @@ namespace IPTV_Checker_2
             set
             {
                 _checkstatus = value;
-                OnPropertyChanged("CheckStatus");
+                OnPropertyChanged(nameof(CheckStatus));
             }
         }
 
@@ -118,7 +118,7 @@ namespace IPTV_Checker_2
             set
             {
                 _channelsCount = value;
-                OnPropertyChanged("ChannelsCount");
+                OnPropertyChanged(nameof(ChannelsCount));
             }
         }
 
@@ -128,7 +128,7 @@ namespace IPTV_Checker_2
             set
             {
                 _online_count = value;
-                OnPropertyChanged("Online_count");
+                OnPropertyChanged(nameof(Online_count));
             }
         }
 
@@ -138,7 +138,7 @@ namespace IPTV_Checker_2
             set
             {
                 _offline_count = value;
-                OnPropertyChanged("Offline_count");
+                OnPropertyChanged(nameof(Offline_count));
             }
         }
 
@@ -148,7 +148,7 @@ namespace IPTV_Checker_2
             set
             {
                 _checked = value;
-                OnPropertyChanged("Checked");
+                OnPropertyChanged(nameof(Checked));
             }
         }
 
@@ -395,7 +395,13 @@ namespace IPTV_Checker_2
                     obj.UserAgent = UserAgent;
                     obj.AllowAutoRedirect = true;
                     using WebResponse webResponse = obj.GetResponse();
-                    if (webResponse.ContentType.Contains("application/x-mpegURL") || webResponse.ContentType.Contains("application/vnd.apple.mpegurl") || webResponse.ContentType.Contains("application/octet-stream"))
+                    if (
+                        webResponse.ContentType.Contains("application/x-mpegURL") ||
+                        webResponse.ContentType.Contains("application/x-mpegurl") ||
+                        webResponse.ContentType.Contains("video/mp2t") ||
+                        webResponse.ContentType.Contains("application/vnd.apple.mpegurl") ||
+                        webResponse.ContentType.Contains("application/octet-stream")
+                        )
                     {
                         return Status.Online;
                     }
@@ -404,7 +410,7 @@ namespace IPTV_Checker_2
                         return Status.Offline;
                     }
                 }
-                catch (Exception)
+                catch (HttpRequestException)
                 {
                 }
             }
