@@ -209,6 +209,7 @@ namespace IPTV_Checker_2
                             Channels = new ObservableCollection<Channel>(),
                             Checked = "∞",
                             StatusBarText = "Ready..",
+                            Country = ""
                         };
                     }
                     return instance;
@@ -237,12 +238,18 @@ namespace IPTV_Checker_2
                 var data = await client.GetStringAsync("http://ip-api.com/json/" + host);
                 JsonData somedata = JsonConvert.DeserializeObject<JsonData>(data);
                 isBusy = false;
-                return somedata.Country;
+                if (somedata.Country != "")
+                {
+                    return somedata.Country;
+                } else
+                {
+                    return "Unknown";
+                }
+                
             }
             catch (WebException e)
             {
                 isBusy = false;
-                Country = "Unknown";
                 throw e;
             }
         }

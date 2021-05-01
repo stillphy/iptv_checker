@@ -416,15 +416,17 @@ namespace IPTV_Checker_2
         {
             Dispatcher.Invoke(async delegate
             {
-                core.IsBusy = true;
                 Channel channel = (Channel)datagrid.SelectedItem;
                 if (channel != null)
                 {
+                    core.IsBusy = true;
                     core.StatusBarText = "Getting country for server : " + channel.Server + ".";
                     string result = await core.GetCountryAsync(channel.URL);
+                    core.StatusBarText = "Finished.";
                     channel.Country = result;
-                    countryColumn.ReadLocalValue((DependencyProperty)datagrid.SelectedItem);
+                    core.IsBusy = false;
                 }
+                
             });
         }
 

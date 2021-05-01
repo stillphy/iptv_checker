@@ -19,17 +19,18 @@ namespace IPTV_Checker_2
         public async Task CheckForUpdatesAsync()
         {
             using HttpClient client = new HttpClient();
-            var actualversion = await client.GetStringAsync(url);
+            string actualversion = await client.GetStringAsync(url);
+            actualversion = actualversion.Replace("\n", "").Replace("\r", "");
 
             if (actualversion == currentVersion)
             {
                 TB_UpdateVerif.Text = "You're up to date.";
-                TB_Version.Text = "IPTV Checker " + currentVersion;
+                TB_Version.Text = "IPTV Checker version " + currentVersion;
             }
             else
             {
                 TB_UpdateVerif.Text = "A new update has been released !\nVersion " + actualversion + " has been released.";
-                TB_Version.Text = "IPTV Checker " + currentVersion;
+                TB_Version.Text = "IPTV Checker version " + currentVersion;
             }
         }
     }

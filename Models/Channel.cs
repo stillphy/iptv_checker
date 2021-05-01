@@ -13,7 +13,7 @@ namespace IPTV_Checker_2.Models
 
         private string _url;
 
-        public string Country { get; internal set; }
+        private string _country;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -107,6 +107,14 @@ namespace IPTV_Checker_2.Models
                 OnPropertyChanged(nameof(Status));
             }
         }
+        public string Country {
+            get => _country;
+            set {
+                _country = value;
+                OnPropertyChanged(nameof(Country));
+            } 
+        }
+
 
         public DateTime DateTime
         {
@@ -121,6 +129,7 @@ namespace IPTV_Checker_2.Models
             Name = string.Empty;
             Status = Status.Unchecked;
             DateTime = DateTime.Now;
+            Country = string.Empty;
         }
 
         public void OnPropertyChanged(string PropertyName)
@@ -133,7 +142,6 @@ namespace IPTV_Checker_2.Models
             if (url != string.Empty && url != null)
             {
                 Uri uri = new Uri(url);
-
                 return uri.Authority;
             }
             else
@@ -148,8 +156,7 @@ namespace IPTV_Checker_2.Models
             {
                 return false;
             }
-            Channel channel = obj as Channel;
-            if (channel == null)
+            if (!(obj is Channel channel))
             {
                 return false;
             }
