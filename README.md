@@ -22,7 +22,7 @@ Those servers are interesting in many aspects.
 
 ## What makes this program interesting ?
 
-1) Integrated Xtream-Codes server looking support
+1) Integrated Xtream-Codes server looking support (Work In Progress)
 2) Check the link's country origin
 3) Efficiency and fast checking
 
