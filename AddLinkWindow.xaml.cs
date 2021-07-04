@@ -1,12 +1,16 @@
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace IPTV_Checker_2
 {
-    public partial class AddTextWindow : Window
+    /// <summary>
+    /// Logique d'interaction pour AddLinkWindow.xaml
+    /// </summary>
+    public partial class AddLinkWindow : Window
     {
         public string str = string.Empty;
 
-        public AddTextWindow()
+        public AddLinkWindow()
         {
             InitializeComponent();
         }

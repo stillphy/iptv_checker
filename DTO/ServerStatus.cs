@@ -1,6 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+/**
+ * Used to reference the Xtream-Codes JSON structure.
+ * Permits to get easier access to what we want.
+ **/
 namespace IPTV_Checker_2.DTO
 {
     public class UserInfo

@@ -254,12 +254,12 @@ namespace IPTV_Checker_2
             }
         }
 
-        public List<Channel> ParseM3u8(string str)
+        public List<Channel> ParseM3u8(string str, SpecificLinkTypes linktype)
         {
             statusBarText = "Importing channels..";
             List<Channel> list;
             list = new List<Channel>();
-            if (str.ToUpper().Contains("#EXTINF"))
+            if (linktype == SpecificLinkTypes.NO && str.ToUpper().Contains("#EXTINF"))
             {
                 foreach (Match item in new Regex("#([^#]*)", RegexOptions.Singleline).Matches(str))
                 {
@@ -271,10 +271,6 @@ namespace IPTV_Checker_2
                     string tagValue, tagValue2;
                     tagValue = GetTagValue("group-title", text);
                     tagValue2 = GetTagValue("tvg-logo", text);
-                    GetTagValue("tvg-title", text);
-                    GetTagValue("tvg-shift", text);
-                    GetTagValue("aspect-ratio", text);
-                    GetTagValue("url-epg", text);
                     
                     if (text3.Trim() != string.Empty)
                     {
@@ -286,6 +282,36 @@ namespace IPTV_Checker_2
                             TvgLogo = tagValue2,
                         });
                     }
+                }
+                return list;
+            }
+            else if (linktype == SpecificLinkTypes.IPTV_ORG && str.ToUpper().Contains("#EXTINF"))
+            {
+                foreach (Match item in new Regex("#([^#]*)", RegexOptions.Singleline).Matches(str))
+                {
+                    if (!item.Value.Trim().Contains("[Not 24/7]") && !item.Value.Trim().Contains("[Geo-blocked]"))
+                    {
+                        string text, text2, text3;
+                        text = item.Value.Trim();
+                        text2 = Regex.Match(text, "#.*").Value.Trim();
+                        text3 = text.Replace(text2, "").Trim();
+                        text2 = text2.Substring(text2.LastIndexOf(",") + 1);
+                        string tagValue, tagValue2;
+                        tagValue = GetTagValue("group-title", text);
+                        tagValue2 = GetTagValue("tvg-logo", text);
+
+                        if (text3.Trim() != string.Empty)
+                        {
+                            list.Add(new Channel
+                            {
+                                URL = text3,
+                                Name = text2?.Trim(),
+                                GroupTag = tagValue,
+                                TvgLogo = tagValue2,
+                            });
+                        }
+                    }
+                   
                 }
                 return list;
             }
@@ -312,7 +338,7 @@ namespace IPTV_Checker_2
             List<Channel> list = channels.Except(Channel_Full).ToList();
             int num = channels.Count - list.Count;
             Channel_Full.AddRange(list);
-            StatusBarText = ((num != 0) ? $"Found {channels.Count}, imported {list.Count} channels, and skipped {num} duplicates." : $"Imported {list.Count()} channels.");
+            StatusBarText = (num != 0) ? $"Found {channels.Count}, imported {list.Count} channels, and skipped {num} duplicates." : $"Imported {list.Count()} channels.";
         }
 
         private string GetTagValue(string tag, string str)
@@ -402,20 +428,13 @@ namespace IPTV_Checker_2
                     obj.UserAgent = UserAgent;
                     obj.AllowAutoRedirect = true;
                     using WebResponse webResponse = obj.GetResponse();
-                    if (
-                        webResponse.ContentType.Contains("application/x-mpegURL") ||
+                    return webResponse.ContentType.Contains("application/x-mpegURL") ||
                         webResponse.ContentType.Contains("application/x-mpegurl") ||
                         webResponse.ContentType.Contains("video/mp2t") ||
                         webResponse.ContentType.Contains("application/vnd.apple.mpegurl") ||
                         webResponse.ContentType.Contains("application/octet-stream")
-                        )
-                    {
-                        return Status.Online;
-                    }
-                    else
-                    {
-                        return Status.Offline;
-                    }
+                        ? Status.Online
+                        : Status.Offline;
                 }
                 catch (HttpRequestException)
                 {
@@ -453,11 +472,11 @@ namespace IPTV_Checker_2
                 foreach (Channel channel in Channels)
                 {
                     string text = "";
-                    text = ((channel.GroupTag != "") ? (text + "group-title=\"" + channel.GroupTag + "\"") : text);
-                    text = ((channel.TvgLogo != "") ? (text + " tvg-logo=\"" + channel.TvgLogo + "\"") : text);
-                    text = ((channel.TvgName != "") ? (text + " tvg-name=\"" + channel.TvgName + "\"") : text);
-                    text = ((channel.TvgShift != "") ? (text + " tvg-shift=\"" + channel.TvgShift + "\"") : text);
-                    text = ((channel.AspectRatio != "") ? (text + " aspect-ratio=\"" + channel.AspectRatio + "\"") : text);
+                    text = (channel.GroupTag != "") ? (text + "group-title=\"" + channel.GroupTag + "\"") : text;
+                    text = (channel.TvgLogo != "") ? (text + " tvg-logo=\"" + channel.TvgLogo + "\"") : text;
+                    text = (channel.TvgName != "") ? (text + " tvg-name=\"" + channel.TvgName + "\"") : text;
+                    text = (channel.TvgShift != "") ? (text + " tvg-shift=\"" + channel.TvgShift + "\"") : text;
+                    text = (channel.AspectRatio != "") ? (text + " aspect-ratio=\"" + channel.AspectRatio + "\"") : text;
                     stringBuilder.AppendLine("#EXTINF:-1 " + ((channel.Url_EPG != "") ? (text + " url-epg=\"" + channel.Url_EPG + "\"") : text) + "," + channel.Name);
                     stringBuilder.AppendLine(channel.URL);
                 }

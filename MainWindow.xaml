@@ -32,7 +32,30 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    <Button x:Name="btn_add_m3u8" Margin="10" ToolTip="Load m3u8 channels list" Click="Btn_add_m3u8_Click">
+                    <Button x:Name="btn_add_Link" Margin="10" ToolTip="Load a playlist link" Click="Btn_add_link_Click">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="{x:Type Button}">
+                                <Setter Property="IsEnabled" Value="True" />
+                                <Style.Triggers>
+                                    <DataTrigger Value="Checking" Binding="{Binding CheckStatus}">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                    <DataTrigger Value="Stopping" Binding="{Binding CheckStatus}">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Grid Width="150">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="17*" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <materialDesign:PackIcon Margin="0,0,0,1" VerticalAlignment="Center" Kind="Web" />
+                            <TextBlock HorizontalAlignment="Center" FontSize="18" Text="Add links" />
+                        </Grid>
+                    </Button>
+                    <Button x:Name="btn_add_m3u8" Margin="10" ToolTip="Load a locally stored m3u8 channel list" Click="Btn_add_m3u8_Click">
                         <Button.Style>
                             <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="{x:Type Button}">
                                 <Setter Property="IsEnabled" Value="True" />
@@ -52,26 +75,7 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <materialDesign:PackIcon Margin="0,0,0,1" VerticalAlignment="Center" Kind="FilePlus" />
-                            <TextBlock HorizontalAlignment="Center" FontSize="18" Text="Open M3u8" />
-                        </Grid>
-                    </Button>
-                    <Button Name="btn_add_text" Margin="10" ToolTip="Use it to add urls, or m3u8 channels list" Click="Btn_add_text_Click">
-                        <FrameworkElement.Style>
-                            <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="{x:Type Button}">
-                                <Setter Property="IsEnabled" Value="True" />
-                                <Style.Triggers>
-                                    <DataTrigger Value="Checking" Binding="{Binding CheckStatus}">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                    <DataTrigger Value="Stopping" Binding="{Binding CheckStatus}">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </FrameworkElement.Style>
-                        <Grid Width="150">
-                            <PackIcon VerticalAlignment="Center" Kind="add" xmlns="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf" />
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="18" Text="Add TXT" />
+                            <TextBlock HorizontalAlignment="Center" FontSize="18" Text="Open playlist" />
                         </Grid>
                     </Button>
                     <Button Name="btn_reset" Margin="10" ToolTip="Clear all channels" Click="Btn_reset_Click">

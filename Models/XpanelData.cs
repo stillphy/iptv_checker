@@ -42,10 +42,9 @@ namespace IPTV_Checker_2.Models
         }
 
         public XpanelData()
-        {
+        {}
 
-        }
-
+        // this is a function that needs to be coded, will use XtreamViewChannels window.
         public async Task<string> GetAllChannelsInM3u8(string url)
         {
             try

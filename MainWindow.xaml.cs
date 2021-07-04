@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -52,7 +53,7 @@ namespace IPTV_Checker_2
             if (openFileDialog.FileName != string.Empty)
             {
                 string str = File.ReadAllText(openFileDialog.FileName);
-                List<Channel> channels = core.ParseM3u8(str);
+                List<Channel> channels = core.ParseM3u8(str, SpecificLinkTypes.NO);
                 core.Add_channels(channels);
                 string directoryName = Path.GetDirectoryName(openFileDialog.FileName);
                 core.LastDir = directoryName;
@@ -71,14 +72,22 @@ namespace IPTV_Checker_2
             }
         }
 
-        private void Btn_add_text_Click(object sender, RoutedEventArgs e)
+        private async void Btn_add_link_Click(object sender, RoutedEventArgs e)
         {
-            AddTextWindow addTextWindow = new AddTextWindow();
-            addTextWindow.ShowDialog();
-            if (addTextWindow.str.Length != 0)
+            AddLinkWindow addLinkWindow = new AddLinkWindow();
+            addLinkWindow.ShowDialog();
+            if (addLinkWindow.str.Length != 0)
             {
                 int count = core.Channel_Full.Count;
-                List<Channel> channels = core.ParseM3u8(addTextWindow.str);
+                using HttpClient client = new HttpClient();
+                SpecificLinkTypes linktype = SpecificLinkTypes.NO;
+                if (addLinkWindow.str.Contains("https://iptv-org.github.io/iptv/"))
+                {
+                    MessageBox.Show("The program has detected the usage of an IPTV-org GitHub link. Geo-locked and Not 24/7 links will be ignored.", "Specific link detected !", MessageBoxButton.OK, MessageBoxImage.Information);
+                    linktype = SpecificLinkTypes.IPTV_ORG;
+                }
+                // TODO : add Xtream-Codes link guessing.
+                List<Channel> channels = core.ParseM3u8(await client.GetStringAsync(addLinkWindow.str), linktype);
                 core.Add_channels(channels);
                 txt_search.Text = string.Empty;
                 radio_all.IsChecked = true;
@@ -386,7 +395,7 @@ namespace IPTV_Checker_2
                     }
                     else
                     {
-                        List<Channel> channels = core.ParseM3u8(text);
+                        List<Channel> channels = core.ParseM3u8(text, SpecificLinkTypes.XTREAM);
                         core.Add_channels(channels);
                         FilterResults();
                         core.IsBusy = false;
