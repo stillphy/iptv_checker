@@ -16,8 +16,9 @@ To prevent such cases, I've ignored them when adding those to the playlist.
 ### Xtream-Codes servers (WIP)
 
 Those servers are interesting in many aspects.
-1st) You can get easy access to the status of the servers (on older versions of the Xtream API, including Reborn) by clicking on "Get Server Status".
-2nd) If you give the program a single channel link, you also can see all the channels that are contained in the Xtream-Codes server by clicking on "Get Server Channels".
+
+1) You can get easy access to the status of the servers (on older versions of the Xtream API, including Reborn) by clicking on "Get Server Status".
+2) If you give the program a single channel link, you also can see all the channels that are contained in the Xtream-Codes server by clicking on "Get Server Channels".
 
 ## What makes this program interesting ?
 
