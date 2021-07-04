@@ -1,6 +1,12 @@
 # IPTV Checker
 A fast and efficient IPTV checker, made for every type of IPTV playlists.
 
+## Legal terms
+
+No channel is inside this program. I am not responsible for any illegal actions you might make using this program.
+Note that Xtream-Codes servers are often borderline when it comes to copyrighted content being restreamed. 
+The fact that this program supports server overlooking is only for **observation purposes** and not for illegal activity.
+
 ## How does it work ?
 
 There's many ways of loading a playlist file : either you load a playlist URL, or you can import a m3u file locally stored in your computer.
