@@ -1,5 +1,4 @@
 using IPTV_Checker_2.Models;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,8 +11,11 @@ using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
+using System.Windows.Forms;
 using System.Windows.Input;
+using Binding = System.Windows.Data.Binding;
+using Clipboard = System.Windows.Clipboard;
+using MessageBox = System.Windows.MessageBox;
 
 namespace IPTV_Checker_2
 {
@@ -43,7 +45,7 @@ namespace IPTV_Checker_2
 
         private void Btn_add_m3u8_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
                 FileName = "",
                 Filter = "M3u files (*.m3u8; *.m3u) | *.m3u8; *.m3u",
@@ -83,10 +85,21 @@ namespace IPTV_Checker_2
                 SpecificLinkTypes linktype = SpecificLinkTypes.NO;
                 if (addLinkWindow.str.Contains("https://iptv-org.github.io/iptv/"))
                 {
-                    MessageBox.Show("The program has detected the usage of an IPTV-org GitHub link. Geo-locked and Not 24/7 links will be ignored.", "Specific link detected !", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("The program has detected the usage of an IPTV-org GitHub link. Geo-locked and Not 24/7 links will be ignored.", "IPTV-ORG link detected !", MessageBoxButton.OK, MessageBoxImage.Information);
                     linktype = SpecificLinkTypes.IPTV_ORG;
                 }
-                // TODO : add Xtream-Codes link guessing.
+                // most of the xtream-codes server links are ending with port 25461, take that into account when looking at the URL.
+                else if (addLinkWindow.str.Contains(":25461/get.php?"))
+                {
+                    DialogResult r = (DialogResult)MessageBox.Show("The program has detected the usage of an Xtream-Code server link. Do you want to see additional data ?", "Xtream-Codes server link detected !", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                    if (r == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        XpanelData xp = new XpanelData();
+                        xp.GetServerStatus(addLinkWindow.str);
+                    }
+                    linktype = SpecificLinkTypes.XTREAM;
+                    
+                }
                 List<Channel> channels = core.ParseM3u8(await client.GetStringAsync(addLinkWindow.str), linktype);
                 core.Add_channels(channels);
                 txt_search.Text = string.Empty;
@@ -395,7 +408,7 @@ namespace IPTV_Checker_2
                     }
                     else
                     {
-                        List<Channel> channels = core.ParseM3u8(text, SpecificLinkTypes.XTREAM);
+                        List<Channel> channels = core.ParseM3u8(text, SpecificLinkTypes.NO);
                         core.Add_channels(channels);
                         FilterResults();
                         core.IsBusy = false;

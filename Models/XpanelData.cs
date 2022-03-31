@@ -44,7 +44,6 @@ namespace IPTV_Checker_2.Models
         public XpanelData()
         {}
 
-        // this is a function that needs to be coded, will use XtreamViewChannels window.
         public async Task<string> GetAllChannelsInM3u8(string url)
         {
             try
@@ -61,6 +60,9 @@ namespace IPTV_Checker_2.Models
 
         public async void GetServerStatus(string url)
         {
+            if (url.Contains("get.php?")) {
+                url = url.Replace("get.php", "player_api.php");
+            }
             try
             {
                 using HttpClient client = new HttpClient();

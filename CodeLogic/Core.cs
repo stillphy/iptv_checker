@@ -228,6 +228,7 @@ namespace IPTV_Checker_2
         {
         }
 
+        // uses the IP-API service to get a IP's country location.
         public async Task<string> GetCountryAsync(string url)
         {
             try
@@ -254,6 +255,7 @@ namespace IPTV_Checker_2
             }
         }
 
+        // parses a m3u8 file to add channels.
         public List<Channel> ParseM3u8(string str, SpecificLinkTypes linktype)
         {
             statusBarText = "Importing channels..";
