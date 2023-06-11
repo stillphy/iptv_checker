@@ -95,7 +95,7 @@ namespace IPTV_Checker_2
             get => _checkstatus;
             set
             {
-                _checkstatus = value;
+                _checkstatus = value;                
                 OnPropertyChanged(nameof(CheckStatus));
             }
         }
@@ -208,7 +208,7 @@ namespace IPTV_Checker_2
                             UserAgent = "Mozilla/5.0 (Windows NT 6.2; Win64; x64;) Gecko/20100101 Firefox/20.0",
                             Channels = new ObservableCollection<Channel>(),
                             Checked = "∞",
-                            StatusBarText = "Ready..",
+                            StatusBarText = "准备..",
                             Country = ""
                         };
                     }
@@ -244,7 +244,7 @@ namespace IPTV_Checker_2
                     return somedata.Country;
                 } else
                 {
-                    return "Unknown";
+                    return "未知";
                 }
                 
             }
@@ -258,7 +258,7 @@ namespace IPTV_Checker_2
         // parses a m3u8 file to add channels.
         public List<Channel> ParseM3u8(string str, SpecificLinkTypes linktype)
         {
-            statusBarText = "Importing channels..";
+            statusBarText = "导入频道数..";
             List<Channel> list;
             list = new List<Channel>();
             if (linktype == SpecificLinkTypes.NO && str.ToUpper().Contains("#EXTINF"))
@@ -322,7 +322,7 @@ namespace IPTV_Checker_2
                 list.Add(new Channel
                 {
                     URL = item2.Value.Trim(),
-                    Name = $"Unknown_{++unknown_count}"
+                    Name = $"未知数量{++unknown_count}"
                 });
             }
             return list;
@@ -332,7 +332,7 @@ namespace IPTV_Checker_2
         {
             if (channels == null)
             {
-                StatusBarText = "No channel has been imported";
+                StatusBarText = "没有频道被导入";
                 return;
             }
             int numberofchannels = channels.Count;
@@ -340,7 +340,7 @@ namespace IPTV_Checker_2
             List<Channel> list = channels.Except(Channel_Full).ToList();
             int num = channels.Count - list.Count;
             Channel_Full.AddRange(list);
-            StatusBarText = (num != 0) ? $"Found {channels.Count}, imported {list.Count} channels, and skipped {num} duplicates." : $"Imported {list.Count()} channels.";
+            StatusBarText = (num != 0) ? $"发现 {channels.Count}, 已导入 {list.Count} 个频道, 并且跳过 {num} 重复." : $"已导入 {list.Count()} 个频道.";
         }
 
         private string GetTagValue(string tag, string str)
@@ -459,7 +459,7 @@ namespace IPTV_Checker_2
             SaveFileDialog saveFileDialog;
             saveFileDialog = new SaveFileDialog
             {
-                Filter = "Playlist file (*.m3u, *.m3u8) | *.m3u, *.m3u8;",
+                Filter = "Playlist 文件 (*.m3u, *.m3u8) | *.m3u, *.m3u8;",
                 FileName = "",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
             };
@@ -470,7 +470,43 @@ namespace IPTV_Checker_2
                 fileName = saveFileDialog.FileName;
                 StringBuilder stringBuilder;
                 stringBuilder = new StringBuilder();
-                stringBuilder.AppendLine("#EXTM3U");
+                //stringBuilder.AppendLine("#EXTM3U");
+                foreach (Channel channel in Channels)
+                {
+//                     string text = "";
+//                     text = (channel.GroupTag != "") ? (text + "group-title=\"" + channel.GroupTag + "\"") : text;
+//                     text = (channel.TvgLogo != "") ? (text + " tvg-logo=\"" + channel.TvgLogo + "\"") : text;
+//                     text = (channel.TvgName != "") ? (text + " tvg-name=\"" + channel.TvgName + "\"") : text;
+//                     text = (channel.TvgShift != "") ? (text + " tvg-shift=\"" + channel.TvgShift + "\"") : text;
+//                     text = (channel.AspectRatio != "") ? (text + " aspect-ratio=\"" + channel.AspectRatio + "\"") : text;
+//                     stringBuilder.AppendLine("#EXTINF:-1 " + ((channel.Url_EPG != "") ? (text + " url-epg=\"" + channel.Url_EPG + "\"") : text) + "," + channel.Name);
+                    stringBuilder.AppendLine(channel.Name + "," + channel.URL);
+                }
+                File.WriteAllText(fileName, stringBuilder.ToString().Trim());
+                MessageBox.Show("文件成功保存", "文件保存", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            }
+            else
+            {
+                MessageBox.Show("文件保存被取消", "文件保存", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+        public void Save2()
+        {
+            SaveFileDialog saveFileDialog;
+            saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Playlist 文件 (*.m3u, *.m3u8) | *.m3u, *.m3u8;",
+                FileName = "",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+            };
+            saveFileDialog.ShowDialog();
+            if (saveFileDialog.FileName != string.Empty)
+            {
+                string fileName;
+                fileName = saveFileDialog.FileName;
+                StringBuilder stringBuilder;
+                stringBuilder = new StringBuilder();
+                //stringBuilder.AppendLine("#EXTM3U");
                 foreach (Channel channel in Channels)
                 {
                     string text = "";
@@ -483,11 +519,11 @@ namespace IPTV_Checker_2
                     stringBuilder.AppendLine(channel.URL);
                 }
                 File.WriteAllText(fileName, stringBuilder.ToString().Trim());
-                MessageBox.Show("File has been saved successfully", "File Save", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                MessageBox.Show("文件保存成功", "文件保存", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             else
             {
-                MessageBox.Show("File save has been cancelled", "File Save", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("文件保存被取消", "文件保存", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
     }

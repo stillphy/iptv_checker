@@ -33,7 +33,7 @@ namespace IPTV_Checker_2
             DataContext = core;
             Loaded += MainWindow_Loaded;
             datagrid.Sorting += Datagrid_Sorting;
-            Title += AboutWindow.currentVersion;
+            Title += AboutWindow.currentVersion + "modfiy by edata @2023-06-11";
             LoadFromRegistry();
             btn_reset.IsEnabled = false;
         }
@@ -85,13 +85,13 @@ namespace IPTV_Checker_2
                 SpecificLinkTypes linktype = SpecificLinkTypes.NO;
                 if (addLinkWindow.str.Contains("https://iptv-org.github.io/iptv/"))
                 {
-                    MessageBox.Show("The program has detected the usage of an IPTV-org GitHub link. Geo-locked and Not 24/7 links will be ignored.", "IPTV-ORG link detected !", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("该程序检测到 IPTV-org GitHub 链接的使用情况。地理锁定和非 24/7 链接将被忽略。", "检测到 IPTV-ORG 链接！", MessageBoxButton.OK, MessageBoxImage.Information);
                     linktype = SpecificLinkTypes.IPTV_ORG;
                 }
                 // most of the xtream-codes server links are ending with port 25461, take that into account when looking at the URL.
                 else if (addLinkWindow.str.Contains(":25461/get.php?"))
                 {
-                    DialogResult r = (DialogResult)MessageBox.Show("The program has detected the usage of an Xtream-Code server link. Do you want to see additional data ?", "Xtream-Codes server link detected !", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                    DialogResult r = (DialogResult)MessageBox.Show("该程序检测到Xtream-Code服务器链接的使用情况。是否要查看其他数据？", "检测到Xtream代码服务器链接！", MessageBoxButton.YesNo, MessageBoxImage.Information);
                     if (r == System.Windows.Forms.DialogResult.Yes)
                     {
                         XpanelData xp = new XpanelData();
@@ -105,7 +105,7 @@ namespace IPTV_Checker_2
                 txt_search.Text = string.Empty;
                 radio_all.IsChecked = true;
                 FilterResults();
-                MessageBox.Show($"Loaded {core.Channel_Full.Count - count} channels into the list.", "IPTV Checker", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                MessageBox.Show($"载入 {core.Channel_Full.Count - count} 个频道数到列表.", "IPTV Checker", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             if (core.Channel_Full.Count > 0)
             {
@@ -140,7 +140,7 @@ namespace IPTV_Checker_2
                 core.CheckStatus = CheckStatus.Finished;
             }
             btn_reset.IsEnabled = true;
-            MessageBox.Show("Finished checking links...", "Links Checking", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            MessageBox.Show("完成链接检查...", "链接检查", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
 
         private void Btn_down_Click(object sender, RoutedEventArgs e)
@@ -163,12 +163,16 @@ namespace IPTV_Checker_2
             sortDirection = ListSortDirection.Ascending;
             core.Reset();
             btn_reset.IsEnabled = false;
-            core.StatusBarText = "Ready..";
+            core.StatusBarText = "准备..";
         }
 
         private void Btn_save_Click(object sender, RoutedEventArgs e)
         {
             core.Save();
+        }
+        private void Btn_save2_Click(object sender, RoutedEventArgs e)
+        {
+            core.Save2();
         }
 
         private void Btn_settings_Click(object sender, RoutedEventArgs e)
@@ -355,6 +359,7 @@ namespace IPTV_Checker_2
         private void Menu_copy_list_Click(object sender, RoutedEventArgs e)
         {
             List<int> selectedIndexes = GetSelectedIndexes();
+            if (selectedIndexes.Count == 0) return;
             StringBuilder stringBuilder = new StringBuilder();
             foreach (int item in selectedIndexes)
             {
@@ -362,23 +367,37 @@ namespace IPTV_Checker_2
                 stringBuilder.AppendLine(core.Channels[item].URL);
             }
             Clipboard.SetText(stringBuilder.ToString().Trim());
-            MessageBox.Show("Channels have been copied to clipboard.", "Copy Channels as", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            MessageBox.Show("频道已复制到剪贴板。", "将频道复制为", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
 
         private void Menu_copy_url_Click(object sender, RoutedEventArgs e)
         {
            List<int> selectedIndexes = GetSelectedIndexes();
-           StringBuilder stringBuilder = new StringBuilder();
+            if (selectedIndexes.Count == 0) return;
+            StringBuilder stringBuilder = new StringBuilder();
            foreach (int item in selectedIndexes)
            {
                 stringBuilder.AppendLine(core.Channels[item].URL);
            }
            Clipboard.SetText(stringBuilder.ToString().Trim());
-           MessageBox.Show("Links have been copied to clipboard.", "Copy Channels", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+           MessageBox.Show("链接已复制到剪贴板。", "复制频道", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
-
+        private void Menu_copySynology_url_Click(object sender, RoutedEventArgs e)
+        {
+            List<int> selectedIndexes = GetSelectedIndexes();
+            if (selectedIndexes.Count == 0) return;
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (int item in selectedIndexes)
+            {
+                stringBuilder.AppendLine(core.Channels[item].Name + "," + core.Channels[item].URL);
+            }
+            Clipboard.SetText(stringBuilder.ToString().Trim());
+            MessageBox.Show("链接已复制到剪贴板。", "复制频道", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+        }
+       
         private void Menu_delete_Click(object sender, RoutedEventArgs e)
         {
+            if (datagrid.SelectedItems.Count == 0) return;
             List<string> list = new List<string>();
             foreach (Channel selectedItem in datagrid.SelectedItems)
             {
@@ -390,21 +409,22 @@ namespace IPTV_Checker_2
                 core.Channel_Full.Remove(item);
             }
             FilterResults();
-            core.StatusBarText = $"{list.Count} channels have been deleted";
+            core.StatusBarText = $"{list.Count} 个频道已被删除";
         }
 
         private void Menu_get_server_channels_Click(object sender, RoutedEventArgs e)
         {
+            if(datagrid.SelectedItem ==null) return;
             Dispatcher.Invoke(async delegate
                 {
                     core.IsBusy = true;
-                    core.StatusBarText = "XTREAM : Verifying channel data...";
+                    core.StatusBarText = "XTREAM ： 正在验证频道数据...";
                     string text = await new XpanelData().GetAllChannelsInM3u8(((Channel)datagrid.SelectedItem).URL);
                     if (string.IsNullOrWhiteSpace(text))
                     {
                         core.IsBusy = false;
-                        core.StatusBarText = "Failed to get server channels..";
-                        MessageBox.Show("Failed to get server channels..", "Server Channels", MessageBoxButton.OK, MessageBoxImage.Hand);
+                        core.StatusBarText = "无法获取服务器频道。";
+                        MessageBox.Show("无法获取服务器频道。", "服务器频道", MessageBoxButton.OK, MessageBoxImage.Hand);
                     }
                     else
                     {
@@ -412,13 +432,14 @@ namespace IPTV_Checker_2
                         core.Add_channels(channels);
                         FilterResults();
                         core.IsBusy = false;
-                        MessageBox.Show("Successfully extracted server channels", "Server Channels", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                        MessageBox.Show("已成功提取服务器频道", "服务器频道", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     }
                 });
         }
 
         private void Menu_get_server_Status_Click(object sender, RoutedEventArgs e)
         {
+            if (datagrid.SelectedItem == null) return;
             Dispatcher.Invoke(delegate
             {
                 core.IsBusy = true;
@@ -427,7 +448,7 @@ namespace IPTV_Checker_2
                 {
                     XpanelData xp = new XpanelData();
                     Uri uri = new Uri(channel.URL);
-                    core.StatusBarText = "Getting server information: " + channel.Server + ".";
+                    core.StatusBarText = "获取服务器信息: " + channel.Server + ".";
                     string player_url = "http://" + uri.Authority + "/player_api.php" + uri.Query;
                     xp.GetServerStatus(player_url);
                 }
@@ -436,15 +457,16 @@ namespace IPTV_Checker_2
 
         private void Menu_get_country_channels_Click(object sender, RoutedEventArgs e)
         {
+            if (datagrid.SelectedItem == null) return;
             Dispatcher.Invoke(async delegate
             {
                 Channel channel = (Channel)datagrid.SelectedItem;
                 if (channel != null)
                 {
                     core.IsBusy = true;
-                    core.StatusBarText = "Getting country for server : " + channel.Server + ".";
+                    core.StatusBarText = "获取服务器的国家/地区 : " + channel.Server + ".";
                     string result = await core.GetCountryAsync(channel.URL);
-                    core.StatusBarText = "Finished.";
+                    core.StatusBarText = "完成.";
                     channel.Country = result;
                     core.IsBusy = false;
                 }
@@ -459,15 +481,17 @@ namespace IPTV_Checker_2
 
         private void Menu_rename_Click(object sender, RoutedEventArgs e)
         {
+
             try
             {
                 Channel channel = (Channel)datagrid.SelectedItem;
+                if (channel == null) return;
                 RenameWindow renameWindow = new RenameWindow(channel.Name);
                 renameWindow.ShowDialog();
                 if (renameWindow.ChannelName.Trim() != string.Empty)
                 {
                     channel.Name = renameWindow.ChannelName.Trim();
-                    MessageBox.Show("Channel Has been Renamed successfully..", "Channel Rename", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    MessageBox.Show("频道已成功重命名..", "重命名频道", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 }
             }
             catch
@@ -489,12 +513,13 @@ namespace IPTV_Checker_2
         {
             try
             {
+                if (datagrid.SelectedItem == null) return;
                 if (core.Vlc_Location != string.Empty)
                 {
                     Process.Start(arguments: ((Channel)datagrid.SelectedItem).URL, fileName: core.Vlc_Location);
                     return;
                 }
-                MessageBox.Show("Please install VLC Player or use settings to locate VLC Location", "VLC Player", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("请安装 VLC 播放器或使用设置来定位 VLC 位置", "VLC 播放器", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
             catch
             {

@@ -53,7 +53,7 @@ namespace IPTV_Checker_2.Models
             }
             catch (HttpRequestException)
             {
-                core.StatusBarText = "Nothing found in server..";
+                core.StatusBarText = "在服务器中找不到任何内容。";
                 return null;
             }
         }
@@ -74,13 +74,13 @@ namespace IPTV_Checker_2.Models
                 serverStatus.user_info.exp_date = GetTimeStampToDateTime(Convert.ToInt32(serverStatus.user_info.exp_date));
 
                 ServerStatusWindow sswindow = new ServerStatusWindow(serverStatus);
-                core.StatusBarText = "Finished getting server information";
+                core.StatusBarText = "已完成获取服务器信息";
                 core.IsBusy = false;
                 sswindow.ShowDialog();
             }
             catch (HttpRequestException e)
             {
-                core.StatusBarText = "An error has occured while getting server information : " + e.Message;
+                core.StatusBarText = "获取服务器信息时出错 : " + e.Message;
                 core.IsBusy = false;
             }
         }
